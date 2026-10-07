@@ -1,0 +1,637 @@
+<title>BMAD Starter Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a single reading column with a sticky section nav; the document chain is shown as a row of file tabs, and each track is a numbered run of step cards. */
+:root {
+  --bg: #F3F5F7;
+  --surface: #FFFFFF;
+  --sunk: #E7EBF0;
+  --fg: #18202B;
+  --muted: #566273;
+  --line: #D3DAE3;
+  --accent: #2847C9;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #E3E8FB;
+  --note: #FFF1B8;
+  --note-ink: #4A3B00;
+  --good: #1E7A4C;
+  --good-soft: #DDF2E6;
+  --bad: #A23A2A;
+  --bad-soft: #F8E1DC;
+  --code-bg: #1B2230;
+  --code-fg: #E4E9F2;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --radius: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11161E; --surface: #19202B; --sunk: #0D1218; --fg: #E6EBF2; --muted: #9AA6B6;
+    --line: #2C3644; --accent: #8EA6FF; --accent-ink: #0E1530; --accent-soft: #1F2A4D;
+    --note: #3D3410; --note-ink: #F5E7A8; --good: #6FD39C; --good-soft: #15301F;
+    --bad: #F09A8B; --bad-soft: #3A1E19; --code-bg: #0A0E14; --code-fg: #DCE3EE;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11161E; --surface: #19202B; --sunk: #0D1218; --fg: #E6EBF2; --muted: #9AA6B6;
+  --line: #2C3644; --accent: #8EA6FF; --accent-ink: #0E1530; --accent-soft: #1F2A4D;
+  --note: #3D3410; --note-ink: #F5E7A8; --good: #6FD39C; --good-soft: #15301F;
+  --bad: #F09A8B; --bad-soft: #3A1E19; --code-bg: #0A0E14; --code-fg: #DCE3EE;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--font-body); font-size: 17px; line-height: 1.6;
+  padding: 0 16px;
+}
+.wrap { max-width: 920px; margin: 0 auto; padding-block: 8px 80px; }
+.prose { max-width: 68ch; }
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2.2rem, 6vw, 3.6rem); font-weight: 800; letter-spacing: -0.02em; }
+h2 { font-size: clamp(1.6rem, 4vw, 2.2rem); font-weight: 700; letter-spacing: -0.01em; }
+h3 { font-size: 1.2rem; font-weight: 700; }
+p { margin: 0; }
+a { color: var(--accent); text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+code { font-family: var(--font-mono); font-size: 0.86em; background: var(--sunk); padding: 0.1em 0.35em; border-radius: 5px; overflow-wrap: anywhere; }
+.eyebrow { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+.stack { display: flex; flex-direction: column; gap: 16px; }
+.stack-lg { display: flex; flex-direction: column; gap: 28px; }
+
+/* nav */
+nav.top {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10;
+  background: var(--bg); border-bottom: 1px solid var(--line);
+  margin: 0 -16px; padding: 10px 16px;
+}
+nav.top .inner { max-width: 920px; margin: 0 auto; display: flex; gap: 6px 18px; flex-wrap: wrap; align-items: center; }
+nav.top .brand { font-family: var(--font-display); font-weight: 800; margin-right: auto; }
+nav.top a { color: var(--muted); text-decoration: none; font-size: 0.92rem; }
+nav.top a:hover { color: var(--fg); }
+
+section { padding-top: 64px; scroll-margin-top: 64px; }
+
+/* hero */
+.hero { padding-top: 48px; display: flex; flex-direction: column; gap: 20px; }
+.hero .lede { font-size: 1.2rem; color: var(--muted); max-width: 60ch; }
+.hero .lede strong { color: var(--fg); }
+.cta-row { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn { display: inline-flex; align-items: center; gap: 8px; font: 700 0.95rem var(--font-body); padding: 11px 18px; border-radius: 999px; text-decoration: none; border: 1.5px solid var(--accent); cursor: pointer; }
+.btn.primary { background: var(--accent); color: var(--accent-ink); }
+.btn.ghost { background: transparent; color: var(--accent); }
+
+/* document chain */
+.chain { display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch; margin-top: 8px; }
+.doc { background: var(--surface); border: 1px solid var(--line); border-radius: 8px 8px 8px 2px; padding: 10px 12px; min-width: 0; flex: 1 1 130px; position: relative; }
+.doc::before { content: ""; position: absolute; top: -1px; left: 10px; width: 34px; height: 4px; background: var(--accent); border-radius: 0 0 3px 3px; }
+.doc .who { font-size: 0.78rem; color: var(--muted); }
+.doc .file { font-family: var(--font-mono); font-size: 0.8rem; font-weight: 600; overflow-wrap: anywhere; }
+.chain-caption { font-size: 0.92rem; color: var(--muted); }
+
+/* compare table */
+.table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+table { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 0.95rem; }
+th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-family: var(--font-display); font-size: 0.95rem; background: var(--sunk); }
+tr:last-child td { border-bottom: 0; }
+td.no { color: var(--bad); }
+td.yes { color: var(--good); font-weight: 700; }
+.mark { display: inline-block; font-family: var(--font-mono); font-size: 0.75rem; padding: 1px 7px; border-radius: 999px; margin-right: 6px; }
+.mark.no { background: var(--bad-soft); color: var(--bad); }
+.mark.yes { background: var(--good-soft); color: var(--good); }
+
+/* proof figures */
+.proof { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+.proof div { border-top: 3px solid var(--accent); padding-top: 10px; }
+.proof b { display: block; font-family: var(--font-display); font-size: 2rem; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.proof span { font-size: 0.9rem; color: var(--muted); }
+
+/* glossary */
+dl.gloss { display: grid; grid-template-columns: minmax(130px, 200px) 1fr; gap: 0; margin: 0; border-top: 1px solid var(--line); }
+dl.gloss dt, dl.gloss dd { padding: 12px 0; border-bottom: 1px solid var(--line); margin: 0; }
+dl.gloss dt { font-weight: 700; padding-right: 16px; }
+dl.gloss dd { color: var(--muted); min-width: 0; }
+@media (max-width: 560px) { dl.gloss { grid-template-columns: 1fr; } dl.gloss dt { border-bottom: 0; padding-bottom: 0; } }
+
+/* steps */
+ol.steps { list-style: none; counter-reset: s; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 14px; }
+ol.steps > li { counter-increment: s; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 18px 18px 64px; position: relative; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+ol.steps > li::before { content: counter(s); position: absolute; left: 16px; top: 16px; width: 32px; height: 32px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); font: 800 1rem/32px var(--font-display); text-align: center; }
+ol.steps > li.loop { border-style: dashed; }
+.step-head { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: baseline; }
+.skill { font-family: var(--font-mono); font-size: 0.82rem; background: var(--accent-soft); color: var(--accent); padding: 2px 8px; border-radius: 6px; font-weight: 600; }
+.persona { font-size: 0.85rem; color: var(--muted); }
+.kv { display: grid; grid-template-columns: 88px 1fr; gap: 4px 10px; font-size: 0.95rem; }
+.kv .k { font-family: var(--font-mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); padding-top: 4px; }
+.kv > div { min-width: 0; }
+@media (max-width: 480px) { ol.steps > li { padding-left: 18px; padding-top: 58px; } .kv { grid-template-columns: 1fr; } .kv .k { padding-top: 6px; } }
+
+/* code / prompt blocks with copy */
+.copybox { position: relative; background: var(--code-bg); color: var(--code-fg); border-radius: 8px; min-width: 0; }
+.copybox pre { margin: 0; padding: 12px 84px 12px 14px; overflow-x: auto; font: 0.84rem/1.55 var(--font-mono); white-space: pre; }
+.copybox.prompt pre { white-space: pre-wrap; font-family: var(--font-body); font-size: 0.95rem; }
+.copybox.prompt::before { content: "SAY THIS"; position: absolute; top: -9px; left: 12px; font: 600 0.62rem var(--font-mono); letter-spacing: 0.12em; background: var(--note); color: var(--note-ink); padding: 2px 6px; border-radius: 4px; }
+.copybox button { position: absolute; top: 8px; right: 8px; font: 600 0.75rem var(--font-mono); background: transparent; color: var(--code-fg); border: 1px solid #5B6678; border-radius: 6px; padding: 4px 9px; cursor: pointer; }
+.copybox button:hover { border-color: var(--code-fg); }
+
+.callout { background: var(--note); color: var(--note-ink); border-radius: var(--radius); padding: 14px 16px; font-size: 0.95rem; }
+.callout strong { color: inherit; }
+
+/* tabs */
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; border-bottom: 1px solid var(--line); }
+.tabs button { font: 700 1rem var(--font-display); background: transparent; color: var(--muted); border: 0; border-bottom: 3px solid transparent; padding: 10px 14px; cursor: pointer; margin-bottom: -1px; }
+.tabs button[aria-selected="true"] { color: var(--fg); border-bottom-color: var(--accent); }
+.tabs .badge { font: 600 0.65rem var(--font-mono); background: var(--note); color: var(--note-ink); padding: 2px 6px; border-radius: 4px; margin-left: 6px; vertical-align: middle; letter-spacing: 0.05em; }
+.panel { padding-top: 22px; }
+
+/* status lane */
+.lane { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-family: var(--font-mono); font-size: 0.8rem; }
+.lane span { background: var(--surface); border: 1px solid var(--line); padding: 4px 9px; border-radius: 6px; }
+.lane span.end { background: var(--good-soft); color: var(--good); border-color: transparent; }
+.lane i { font-style: normal; color: var(--muted); }
+
+/* checklist */
+.check { display: flex; flex-direction: column; gap: 4px; }
+.check label { display: flex; gap: 12px; align-items: flex-start; padding: 10px 12px; border-radius: 8px; cursor: pointer; }
+.check label:hover { background: var(--sunk); }
+.check input { width: 20px; height: 20px; margin-top: 3px; accent-color: var(--accent); flex: none; }
+.check input:checked + span { color: var(--muted); text-decoration: line-through; }
+.progress { height: 8px; background: var(--sunk); border-radius: 999px; overflow: hidden; }
+.progress > div { height: 100%; background: var(--good); width: 0; transition: width 0.3s; }
+@media (prefers-reduced-motion: reduce) { .progress > div { transition: none; } }
+
+/* demo agenda */
+.agenda { display: grid; grid-template-columns: 70px 1fr; border-top: 1px solid var(--line); }
+.agenda > * { padding: 12px 0; border-bottom: 1px solid var(--line); min-width: 0; }
+.agenda .t { font-family: var(--font-mono); font-size: 0.85rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* faq */
+details { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 0 16px; }
+details + details { margin-top: 8px; }
+summary { cursor: pointer; font-weight: 700; padding: 14px 0; }
+details[open] summary { border-bottom: 1px solid var(--line); margin-bottom: 12px; }
+details > div { padding-bottom: 14px; display: flex; flex-direction: column; gap: 10px; }
+
+footer { margin-top: 72px; padding-top: 20px; border-top: 1px solid var(--line); font-size: 0.9rem; color: var(--muted); display: flex; flex-direction: column; gap: 6px; }
+</style>
+
+<nav class="top" aria-label="Sections">
+  <div class="inner">
+    <span class="brand">BMAD Starter Guide</span>
+    <a href="#why">Why BMAD</a>
+    <a href="#words">Key words</a>
+    <a href="#setup">Setup</a>
+    <a href="#tracks">API · UI · DB</a>
+    <a href="#demo">Demo plan</a>
+    <a href="#help">Help</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<header class="hero">
+  <span class="eyebrow">For the AIDLC team · bmad-method v6.12.1</span>
+  <h1>Build software with an AI team that writes things down</h1>
+  <p class="lede">The <strong>BMAD Method</strong> turns your AI coding assistant into a small agile team: an analyst, a product manager, an architect, and a developer. Each one produces a short document, and the next one builds on it. You make the decisions. The AI does the drafting, coding and checking.</p>
+  <div class="cta-row">
+    <a class="btn primary" href="#setup">Set it up (about 15 min)</a>
+    <a class="btn ghost" href="#tracks">Pick API, UI or DB</a>
+  </div>
+  <div class="stack" style="gap:8px; margin-top: 12px;">
+    <div class="chain" aria-label="Document chain, in order">
+      <div class="doc"><div class="who">Analyst</div><div class="file">product-brief.md</div></div>
+      <div class="doc"><div class="who">Product manager</div><div class="file">prd.md</div></div>
+      <div class="doc"><div class="who">Architect</div><div class="file">architecture.md</div></div>
+      <div class="doc"><div class="who">Planning</div><div class="file">epics.md</div></div>
+      <div class="doc"><div class="who">Developer</div><div class="file">1-1-story.md → code</div></div>
+    </div>
+    <p class="chain-caption">Each document is a plain file in your repo. The next step reads it, so you never have to re-explain your project to the AI.</p>
+  </div>
+</header>
+
+<!-- WHY -->
+<section id="why" class="stack-lg">
+  <div class="stack prose">
+    <span class="eyebrow">The case for the POC</span>
+    <h2>Why use BMAD instead of just chatting with an AI?</h2>
+    <p>Plain prompting works for one-off snippets. It falls apart on a real project: the AI forgets earlier decisions, each endpoint gets built a little differently, and nothing is written down for the next person. BMAD fixes that with a fixed set of steps and a document at each step.</p>
+  </div>
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>What you care about</th><th>Plain AI chat</th><th>With BMAD</th></tr></thead>
+      <tbody>
+        <tr><td>Where requirements live</td><td class="no"><span class="mark no">✕</span>Scattered across chat history</td><td class="yes"><span class="mark yes">✓</span><code>prd.md</code>, reviewed and versioned in git</td></tr>
+        <tr><td>Consistency between features</td><td class="no"><span class="mark no">✕</span>Depends on how each prompt was worded</td><td class="yes"><span class="mark yes">✓</span>Every story follows the same architecture decisions</td></tr>
+        <tr><td>Testing</td><td class="no"><span class="mark no">✕</span>Ad hoc, often skipped</td><td class="yes"><span class="mark yes">✓</span>Each acceptance criterion gets a test</td></tr>
+        <tr><td>Code review</td><td class="no"><span class="mark no">✕</span>The same chat reviews its own code</td><td class="yes"><span class="mark yes">✓</span>Independent review in a fresh session</td></tr>
+        <tr><td>Progress visibility</td><td class="no"><span class="mark no">✕</span>Ask the developer</td><td class="yes"><span class="mark yes">✓</span><code>sprint-status.yaml</code> shows every story's state</td></tr>
+        <tr><td>Changing requirements</td><td class="no"><span class="mark no">✕</span>Docs and code drift apart</td><td class="yes"><span class="mark yes">✓</span><code>bmad-correct-course</code> updates all documents together</td></tr>
+        <tr><td>Onboarding a new teammate</td><td class="no"><span class="mark no">✕</span>Knowledge sits in people's heads</td><td class="yes"><span class="mark yes">✓</span>They read the planning folder</td></tr>
+        <tr><td>Size of process</td><td>One size</td><td class="yes"><span class="mark yes">✓</span>Small fix: build straight away. New service: full planning.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="stack">
+    <h3>What our API POC produced</h3>
+    <div class="proof">
+      <div><b>5</b><span>planning documents, from brief to story file</span></div>
+      <div><b>6</b><span>architecture decisions every endpoint follows</span></div>
+      <div><b>4</b><span>user stories with testable acceptance criteria</span></div>
+      <div><b>11</b><span>automated tests, all passing</span></div>
+    </div>
+    <p class="chain-caption">Source: the <code>bmad-api-poc/</code> folder in the <code>practicepython</code> repo (Task Management API, FastAPI).</p>
+  </div>
+</section>
+
+<!-- WORDS -->
+<section id="words" class="stack-lg">
+  <div class="stack prose">
+    <span class="eyebrow">Read this once</span>
+    <h2>Seven words you'll see everywhere</h2>
+  </div>
+  <dl class="gloss">
+    <dt>Agent</dt><dd>A role the AI plays, with a name: Mary (analyst), John (product manager), Winston (architect), Sally (UX designer), Amelia (developer). Talk to one when you want that expertise.</dd>
+    <dt>Skill</dt><dd>A guided task the AI follows step by step, such as "create the PRD". Skill names start with <code>bmad-</code>. You run one by typing its name or asking in plain words.</dd>
+    <dt>Artifact</dt><dd>The document a skill produces. Stored in <code>_bmad-output/</code> in your project.</dd>
+    <dt>PRD</dt><dd>Product Requirements Document: what the software must do, written as numbered requirements.</dd>
+    <dt>Epic / story</dt><dd>An epic is a large feature. A story is one small piece of it that can be built and tested in one session.</dd>
+    <dt>Acceptance criteria</dt><dd>The checks that prove a story is finished, written as "Given… when… then…". These become your tests.</dd>
+    <dt>Sprint status</dt><dd>A file that tracks every story through <code>backlog → ready-for-dev → in-progress → review → done</code>.</dd>
+  </dl>
+</section>
+
+<!-- SETUP -->
+<section id="setup" class="stack-lg">
+  <div class="stack prose">
+    <span class="eyebrow">One-time setup · about 15 minutes</span>
+    <h2>Set up your computer and project</h2>
+    <p>You do this once per machine (steps 1–2) and once per project (steps 3–5). Tick the boxes as you go. Your ticks are saved in this browser only.</p>
+  </div>
+
+  <div class="stack" id="setup-check">
+    <div class="progress" aria-hidden="true"><div id="setup-bar"></div></div>
+    <ol class="steps">
+      <li>
+        <div class="step-head"><h3>Install the basic tools</h3></div>
+        <p>You need three free tools. Install each one, then run the check commands in a terminal. Each should print a version number.</p>
+        <div class="kv">
+          <span class="k">Node.js</span><div>Version 20.12 or newer, from <a href="https://nodejs.org" target="_blank" rel="noopener">nodejs.org</a> (pick "LTS").</div>
+          <span class="k">Python</span><div>Version 3.10 or newer, from <a href="https://www.python.org/downloads/" target="_blank" rel="noopener">python.org</a>.</div>
+          <span class="k">uv</span><div>A Python helper that BMAD uses to run its scripts.</div>
+        </div>
+        <div class="copybox"><pre># macOS / Linux: install uv
+curl -LsSf https://astral.sh/uv/install.sh | sh
+# Windows (PowerShell): install uv
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+
+# Check all three
+node --version
+python3 --version
+uv --version</pre><button type="button">Copy</button></div>
+        <div class="check"><label><input type="checkbox" id="s1"><span>All three print a version</span></label></div>
+      </li>
+      <li>
+        <div class="step-head"><h3>Install an AI coding tool</h3></div>
+        <p>BMAD runs inside the AI tool you already use. Pick one:</p>
+        <div class="kv">
+          <span class="k">Claude Code</span><div>Terminal or VS Code. Install with <code>npm install -g @anthropic-ai/claude-code</code>, then run <code>claude</code>.</div>
+          <span class="k">Cursor</span><div>Download from cursor.com.</div>
+          <span class="k">Copilot</span><div>VS Code with the GitHub Copilot extension.</div>
+        </div>
+        <div class="check"><label><input type="checkbox" id="s2"><span>My AI tool opens and answers a question</span></label></div>
+      </li>
+      <li>
+        <div class="step-head"><h3>Create a project folder</h3></div>
+        <div class="copybox"><pre>mkdir task-api
+cd task-api
+git init</pre><button type="button">Copy</button></div>
+        <div class="check"><label><input type="checkbox" id="s3"><span>Folder created</span></label></div>
+      </li>
+      <li>
+        <div class="step-head"><h3>Install BMAD into the project</h3></div>
+        <p>Run this inside the project folder. It asks a few questions. The defaults are fine, except you must pick your AI tool.</p>
+        <div class="copybox"><pre>npx bmad-method@latest install</pre><button type="button">Copy</button></div>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>The installer asks</th><th>What to answer</th></tr></thead>
+            <tbody>
+              <tr><td>Your name</td><td>Your name or your team's name. Agents use it to address you.</td></tr>
+              <tr><td>Languages</td><td>English (or your preference)</td></tr>
+              <tr><td>Output folder</td><td>Keep the default, <code>_bmad-output</code></td></tr>
+              <tr><td>Modules</td><td>Keep <strong>BMad Method</strong> selected. Others are optional extras.</td></tr>
+              <tr><td>Tools / IDEs</td><td>Select the AI tool you installed in step 2</td></tr>
+              <tr><td>Experience level</td><td>Beginner, if you want agents to explain more</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="chain-caption">Prefer no questions? This does the same with defaults for Claude Code. Swap <code>claude-code</code> for <code>cursor</code> or <code>github-copilot</code>.</p>
+        <div class="copybox"><pre>npx bmad-method@latest install --yes --modules bmm --tools claude-code --user-name "AIDLC Team"</pre><button type="button">Copy</button></div>
+        <div class="check"><label><input type="checkbox" id="s4"><span>Installer finished and a <code>_bmad</code> folder exists</span></label></div>
+      </li>
+      <li>
+        <div class="step-head"><h3>Check that it works</h3><span class="skill">bmad-help</span></div>
+        <p>Open the project folder in your AI tool and type the line below. In Claude Code you can also type <code>/bmad-help</code>. If it answers with BMAD steps, you're ready.</p>
+        <div class="copybox prompt"><pre>bmad-help: I'm new to BMAD. I want to build a small REST API. Where do I start?</pre><button type="button">Copy</button></div>
+        <div class="check"><label><input type="checkbox" id="s5"><span>BMAD answered with a suggested next step</span></label></div>
+      </li>
+    </ol>
+    <div class="callout"><strong>Most important habit:</strong> start a new chat for each step. The documents carry the context forward. A long, single chat makes the AI slower and more confused.</div>
+  </div>
+</section>
+
+<!-- TRACKS -->
+<section id="tracks" class="stack-lg">
+  <div class="stack prose">
+    <span class="eyebrow">Step-by-step recipes</span>
+    <h2>Pick what you're building</h2>
+    <p>Each recipe lists the skill to run, a prompt you can copy, and what you get. Start with the API recipe for the POC. UI and database work use the same flow with a few extra steps.</p>
+  </div>
+
+  <div>
+    <div class="tabs" role="tablist" aria-label="Development track">
+      <button role="tab" id="tab-api" aria-controls="panel-api" aria-selected="true">API<span class="badge">POC</span></button>
+      <button role="tab" id="tab-ui" aria-controls="panel-ui" aria-selected="false" tabindex="-1">UI</button>
+      <button role="tab" id="tab-db" aria-controls="panel-db" aria-selected="false" tabindex="-1">Database</button>
+    </div>
+
+    <!-- API -->
+    <div class="panel stack" role="tabpanel" id="panel-api" aria-labelledby="tab-api">
+      <p class="prose">Example: a Task Management API. The finished version of every document below is in <code>bmad-api-poc/_bmad-output/</code>, so you can compare your results.</p>
+      <ol class="steps">
+        <li>
+          <div class="step-head"><h3>Describe the idea</h3><span class="skill">bmad-product-brief</span><span class="persona">Mary, analyst</span></div>
+          <div class="copybox prompt"><pre>Create a product brief. We need a REST API so internal teams can create, read, update and delete tasks, and dashboards and bots can integrate with it. This is a POC: no login and no database yet.</pre><button type="button">Copy</button></div>
+          <div class="kv"><span class="k">You get</span><div><code>product-brief.md</code>: problem, users, goals, what's out of scope</div><span class="k">Tip</span><div>Mary asks questions. Short answers are fine. Say "use sensible defaults" if you're unsure.</div></div>
+        </li>
+        <li>
+          <div class="step-head"><h3>Write the requirements</h3><span class="skill">bmad-prd</span><span class="persona">John, product manager</span></div>
+          <div class="copybox prompt"><pre>Create the PRD from the product brief. For each endpoint, define the fields and validation rules, pagination, the error response format, and the API version prefix.</pre><button type="button">Copy</button></div>
+          <div class="kv"><span class="k">You get</span><div><code>prd.md</code>: numbered requirements (FR1, FR2…) and quality rules (NFR1…)</div><span class="k">Check</span><div>Every error case has a status code. Ask John to "validate the PRD" when it's done.</div></div>
+        </li>
+        <li>
+          <div class="step-head"><h3>Decide how it's built</h3><span class="skill">bmad-architecture</span><span class="persona">Winston, architect</span></div>
+          <div class="copybox prompt"><pre>Create the architecture from the PRD. Stack: Python, FastAPI, Pydantic v2, pytest. Storage must be swappable, in-memory for the POC. Include the folder structure and the error format. Keep it short: decisions only.</pre><button type="button">Copy</button></div>
+          <div class="kv"><span class="k">You get</span><div><code>architecture.md</code>: a short list of decisions every feature must follow</div><span class="k">Why</span><div>This step is what keeps endpoints consistent. Don't skip it for a new service.</div></div>
+        </li>
+        <li>
+          <div class="step-head"><h3>Split into stories</h3><span class="skill">bmad-create-epics-and-stories</span></div>
+          <div class="copybox prompt"><pre>Create the epics and stories list from the PRD and architecture. One story per endpoint, each with Given/When/Then acceptance criteria that name the status codes.</pre><button type="button">Copy</button></div>
+          <div class="kv"><span class="k">You get</span><div><code>epics.md</code>: e.g. Story 1.1 Create, 1.2 Read, 1.3 Update, 1.4 Delete</div></div>
+        </li>
+        <li>
+          <div class="step-head"><h3>Check readiness and plan the sprint</h3><span class="skill">bmad-sprint-planning</span></div>
+          <div class="copybox prompt"><pre>Run sprint planning.</pre><button type="button">Copy</button></div>
+          <div class="kv"><span class="k">You get</span><div><code>sprint-status.yaml</code>. It also warns you if the plan has gaps.</div></div>
+          <div class="lane" aria-label="Story statuses"><span>backlog</span><i>→</i><span>ready-for-dev</span><i>→</i><span>in-progress</span><i>→</i><span>review</span><i>→</i><span class="end">done</span></div>
+        </li>
+        <li class="loop">
+          <div class="step-head"><h3>Build each story (repeat)</h3><span class="persona">Amelia, developer</span></div>
+          <p>For every story, run these three in order. Use a new chat for each one.</p>
+          <div class="kv">
+            <span class="k">a</span><div><span class="skill">bmad-create-story</span> "Create the next story." It writes a story file with tasks and notes.</div>
+            <span class="k">b</span><div><span class="skill">bmad-build</span> "Build story 1.1." It writes code and tests, then runs the tests.</div>
+            <span class="k">c</span><div><span class="skill">bmad-code-review</span> "Run code review." Fix what it finds.</div>
+          </div>
+          <div class="kv"><span class="k">Tip</span><div>Use a different AI model for the review if you can. A second opinion catches more.</div></div>
+        </li>
+        <li>
+          <div class="step-head"><h3>Add API tests</h3><span class="skill">bmad-qa-generate-e2e-tests</span></div>
+          <div class="copybox prompt"><pre>Create qa automated tests for the tasks API.</pre><button type="button">Copy</button></div>
+        </li>
+        <li>
+          <div class="step-head"><h3>Run it and look back</h3><span class="skill">bmad-retrospective</span></div>
+          <div class="copybox"><pre>pip install -r requirements.txt
+pytest -q
+uvicorn app.main:app --reload    # open http://127.0.0.1:8000/docs</pre><button type="button">Copy</button></div>
+          <div class="copybox prompt"><pre>Let's retro epic 1.</pre><button type="button">Copy</button></div>
+        </li>
+      </ol>
+    </div>
+
+    <!-- UI -->
+    <div class="panel stack" role="tabpanel" id="panel-ui" aria-labelledby="tab-ui" hidden>
+      <p class="prose">Example: a web screen where users see and manage the tasks from the API. The flow is the same as the API recipe, with a UX step added and a human visual check at the end.</p>
+      <ol class="steps">
+        <li>
+          <div class="step-head"><h3>Brief and requirements</h3><span class="skill">bmad-product-brief</span><span class="skill">bmad-prd</span></div>
+          <p>Same as the API track. Describe the screens in terms of what users want to get done, not how they look.</p>
+          <div class="copybox prompt"><pre>Create the PRD for a web app where team members view, filter and update tasks. It uses our existing Tasks API (see the OpenAPI spec at /openapi.json).</pre><button type="button">Copy</button></div>
+        </li>
+        <li>
+          <div class="step-head"><h3>Design the experience</h3><span class="skill">bmad-ux</span><span class="persona">Sally, UX designer</span></div>
+          <div class="copybox prompt"><pre>Let's create the UX design from the PRD. Cover the task list, the task detail panel, empty states, error messages, and mobile layout.</pre><button type="button">Copy</button></div>
+          <div class="kv"><span class="k">You get</span><div><code>DESIGN.md</code> (how it looks) and <code>EXPERIENCE.md</code> (how it behaves)</div></div>
+        </li>
+        <li>
+          <div class="step-head"><h3>Front-end architecture</h3><span class="skill">bmad-architecture</span></div>
+          <div class="copybox prompt"><pre>Create the architecture from the PRD and UX documents. Decide the framework, component structure, state management, how we call the API, and how we handle loading and errors.</pre><button type="button">Copy</button></div>
+        </li>
+        <li>
+          <div class="step-head"><h3>Stories and sprint</h3><span class="skill">bmad-create-epics-and-stories</span><span class="skill">bmad-sprint-planning</span></div>
+          <p>Ask for one story per screen or component. Acceptance criteria should describe what the user sees.</p>
+        </li>
+        <li class="loop">
+          <div class="step-head"><h3>Build each story (repeat)</h3></div>
+          <div class="kv">
+            <span class="k">a</span><div><span class="skill">bmad-create-story</span>, then <span class="skill">bmad-build</span>, then <span class="skill">bmad-code-review</span>, as in the API track</div>
+            <span class="k">b</span><div><span class="skill">bmad-walkthrough</span> "Walk me through this change." A person checks the screen and how to test it before merging.</div>
+          </div>
+        </li>
+      </ol>
+    </div>
+
+    <!-- DB -->
+    <div class="panel stack" role="tabpanel" id="panel-db" aria-labelledby="tab-db" hidden>
+      <p class="prose">Example: replacing the POC's in-memory storage with PostgreSQL. BMAD has no separate database skill. The architect makes the data design decisions, and each table or migration becomes a story.</p>
+      <ol class="steps">
+        <li>
+          <div class="step-head"><h3>Capture the data needs</h3><span class="skill">bmad-prd</span></div>
+          <div class="copybox prompt"><pre>Update the PRD: tasks must now be stored durably. Add requirements for data retention, expected volume, and who can see which tasks.</pre><button type="button">Copy</button></div>
+        </li>
+        <li>
+          <div class="step-head"><h3>Design the data model</h3><span class="skill">bmad-architecture</span><span class="persona">Winston, architect</span></div>
+          <div class="copybox prompt"><pre>Update the architecture for PostgreSQL. Decide: the tables and columns, keys and indexes, naming rules, the migration tool, how we roll back a migration, and how tests get a clean database. Keep the existing TaskRepository interface.</pre><button type="button">Copy</button></div>
+          <div class="kv"><span class="k">You get</span><div>Data-model decisions in <code>architecture.md</code>, which every migration story will follow</div></div>
+        </li>
+        <li>
+          <div class="step-head"><h3>One story per change</h3><span class="skill">bmad-create-epics-and-stories</span></div>
+          <p>Ask for separate stories, e.g. "create tasks table", "SQL repository", "migrate existing data". Each acceptance criterion should include "the migration can be rolled back".</p>
+        </li>
+        <li class="loop">
+          <div class="step-head"><h3>Build and review each story</h3><span class="skill">bmad-build</span><span class="skill">bmad-code-review</span></div>
+          <div class="copybox prompt"><pre>Run code review. Pay special attention to the migration: data loss, locking on large tables, missing indexes, and rollback.</pre><button type="button">Copy</button></div>
+        </li>
+        <li>
+          <div class="step-head"><h3>When the schema has to change</h3><span class="skill">bmad-correct-course</span></div>
+          <div class="copybox prompt"><pre>Correct course: we need to add an "assignee" column to tasks. Update the PRD, architecture and stories.</pre><button type="button">Copy</button></div>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="callout"><strong>Small change? Skip the planning.</strong> For one new endpoint or a bug fix, go straight to <code>bmad-build</code>: "Add a GET /tasks/search endpoint that searches titles." BMAD sizes the process to the work.</div>
+</section>
+
+<!-- DEMO -->
+<section id="demo" class="stack-lg">
+  <div class="stack prose">
+    <span class="eyebrow">Showcasing the POC</span>
+    <h2>A 15-minute demo for stakeholders</h2>
+    <p>Show the documents first, then build something live. Building one new story on stage proves the point better than slides.</p>
+  </div>
+  <div class="agenda">
+    <span class="t">0–2</span><div><strong>The problem.</strong> Open <code>product-brief.md</code>. One minute on why plain AI chat doesn't scale to a team.</div>
+    <span class="t">2–4</span><div><strong>The plan.</strong> Scroll <code>prd.md</code> and <code>architecture.md</code>. Point at one decision (the error format) and show it in the code.</div>
+    <span class="t">4–6</span><div><strong>Traceability.</strong> Open story 1.1. Show its acceptance criteria next to the tests that check them.</div>
+    <span class="t">6–11</span><div><strong>Live build.</strong> Run <code>bmad-build</code> on the new story below and let the audience watch it follow the architecture without being told.</div>
+    <span class="t">11–13</span><div><strong>Proof.</strong> Run <code>pytest -q</code>, then try the new endpoint in Swagger at <code>/docs</code>.</div>
+    <span class="t">13–15</span><div><strong>Status and questions.</strong> Ask "show sprint status". Share the scorecard.</div>
+  </div>
+  <div class="copybox prompt"><pre>Build this story. Story 1.5: Search tasks by title. As an integrating developer, I want GET /api/v1/tasks?q=&lt;text&gt; to return only tasks whose title contains the text (case-insensitive), so that I can find tasks quickly. Acceptance criteria: 1) q filters by title, case-insensitive. 2) q works together with status, limit and offset. 3) q longer than 100 characters returns 422 with code VALIDATION_ERROR.</pre><button type="button">Copy</button></div>
+
+  <div class="stack">
+    <h3>Scorecard to fill in after the POC</h3>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Measure</th><th>How to measure it</th></tr></thead>
+        <tbody>
+          <tr><td>Time from idea to working API</td><td>Clock time for each phase (brief, PRD, architecture, build)</td></tr>
+          <tr><td>Rework</td><td>Number of stories that needed a second build or review round</td></tr>
+          <tr><td>Consistency</td><td>Do all endpoints follow the architecture decisions without reminders?</td></tr>
+          <tr><td>Test coverage</td><td>Share of acceptance criteria with an automated test</td></tr>
+          <tr><td>Onboarding</td><td>Can a new teammate run the project from the docs in under 10 minutes?</td></tr>
+          <tr><td>Document quality</td><td>Would you use the PRD and architecture as real design documents?</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- HELP -->
+<section id="help" class="stack-lg">
+  <div class="stack prose">
+    <span class="eyebrow">When you're stuck</span>
+    <h2>Quick answers</h2>
+  </div>
+
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>I want to…</th><th>Say this</th></tr></thead>
+      <tbody>
+        <tr><td>Know what to do next</td><td><code>bmad-help</code> or "show sprint status"</td></tr>
+        <tr><td>Brainstorm an idea</td><td>"Help me brainstorm…" (<code>bmad-brainstorming</code>)</td></tr>
+        <tr><td>Research a technology choice</td><td>"Technical research: FastAPI vs Spring Boot for…" (<code>bmad-deep-recon</code>)</td></tr>
+        <tr><td>Hear several experts debate</td><td>"Party mode: should we use REST or GraphQL?" (<code>bmad-party-mode</code>)</td></tr>
+        <tr><td>Get a deeper critique of a document</td><td>"Run a pre-mortem on the architecture" (<code>bmad-advanced-elicitation</code>)</td></tr>
+        <tr><td>Make agents follow team rules</td><td>"Customize bmad" (<code>bmad-customize</code>)</td></tr>
+        <tr><td>Use BMAD on an existing codebase</td><td><code>bmad-help</code>: "I want to add a feature to this existing service"</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div>
+    <details>
+      <summary><code>npx</code> or <code>node</code> is "not recognized"</summary>
+      <div><p>Node.js isn't installed, or your terminal was open before you installed it. Install the LTS version from nodejs.org, close the terminal, open a new one, and run <code>node --version</code>.</p></div>
+    </details>
+    <details>
+      <summary>My AI tool doesn't know the <code>bmad-</code> skills</summary>
+      <div><p>Restart the AI tool so it picks up the new files. Check that the skills folder exists: <code>.claude/skills/</code> for Claude Code, <code>.agents/skills/</code> for Cursor and Copilot. If it's missing, run the installer again and select your tool.</p></div>
+    </details>
+    <details>
+      <summary>"uv: command not found"</summary>
+      <div><p>Install uv with the command in setup step 1, then open a new terminal. Some BMAD skills (sprint planning, for example) use it to run helper scripts.</p></div>
+    </details>
+    <details>
+      <summary>The agent asks too many questions</summary>
+      <div><p>Answer briefly, or say: "Use sensible defaults and list your assumptions at the end." You can correct the assumptions afterwards.</p></div>
+    </details>
+    <details>
+      <summary>The AI ignored the architecture</summary>
+      <div><p>You probably did several steps in one long chat. Start a new chat for the story. If it still drifts, run <code>bmad-project-context</code> to record the rule and the mistake, so every future session sees it.</p></div>
+    </details>
+    <details>
+      <summary>Requirements changed halfway through</summary>
+      <div><p>Run <code>bmad-correct-course</code> and describe the change. It updates the PRD, architecture and stories together instead of you editing each one by hand.</p></div>
+    </details>
+  </div>
+</section>
+
+<footer>
+  <p>Based on <code>bmad-method</code> v6.12.1. BMAD changes often; if a skill name here doesn't work, run <code>bmad-help</code> to see what your version has.</p>
+  <p>Official docs: <a href="https://docs.bmad-method.org" target="_blank" rel="noopener">docs.bmad-method.org</a> · Source: <a href="https://github.com/bmad-code-org/BMAD-METHOD" target="_blank" rel="noopener">github.com/bmad-code-org/BMAD-METHOD</a></p>
+</footer>
+</div>
+
+<script>
+(function () {
+  // Copy buttons
+  document.querySelectorAll('.copybox button').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var pre = btn.parentElement.querySelector('pre');
+      var text = pre.innerText;
+      var done = function () { btn.textContent = 'Copied'; setTimeout(function () { btn.textContent = 'Copy'; }, 1500); };
+      var fallback = function () {
+        var r = document.createRange(); r.selectNodeContents(pre);
+        var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+        btn.textContent = 'Press Ctrl+C';
+        setTimeout(function () { btn.textContent = 'Copy'; }, 2500);
+      };
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done, fallback);
+        } else { fallback(); }
+      } catch (e) { fallback(); }
+    });
+  });
+
+  // Tabs
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('[role="tab"]'));
+  function select(tab, focus) {
+    tabs.forEach(function (t) {
+      var on = t === tab;
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      t.tabIndex = on ? 0 : -1;
+      document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+    });
+    if (focus) tab.focus();
+  }
+  tabs.forEach(function (t, i) {
+    t.addEventListener('click', function () { select(t); });
+    t.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowRight') select(tabs[(i + 1) % tabs.length], true);
+      if (e.key === 'ArrowLeft') select(tabs[(i - 1 + tabs.length) % tabs.length], true);
+    });
+  });
+  var map = { api: 'tab-api', ui: 'tab-ui', db: 'tab-db' };
+  var h = (location.hash || '').slice(1);
+  if (map[h]) { select(document.getElementById(map[h])); document.getElementById('tracks').scrollIntoView(); }
+
+  // Setup checklist, saved per viewer
+  var KEY = 'bmad-setup-checks';
+  var boxes = Array.prototype.slice.call(document.querySelectorAll('#setup-check input[type="checkbox"]'));
+  var saved = {};
+  try { saved = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { saved = {}; }
+  function update() {
+    var n = boxes.filter(function (b) { return b.checked; }).length;
+    document.getElementById('setup-bar').style.width = (n / boxes.length * 100) + '%';
+  }
+  boxes.forEach(function (b) {
+    b.checked = !!saved[b.id];
+    b.addEventListener('change', function () {
+      saved[b.id] = b.checked;
+      try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch (e) {}
+      update();
+    });
+  });
+  update();
+})();
+</script>
